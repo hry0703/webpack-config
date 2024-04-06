@@ -93,3 +93,286 @@ Babel中默认只转换新的 JavaScript 句法，例如箭头函数、扩展运
 
 ## 配置eslint 校验代码
 yarn add eslint eslint-loader -D
+
+
+## 全局变量引入问题---三种方法
+yarn add expose-loader -D
+```javascript
+// 在main.js 中引用 
+import $ from 'jquery' // $变量默认不会暴露在全局的window上  每处用到的地方都需要引入
+实现依赖全局使用的方法：
+方法1:暴露到全局的window上 import $ from 'expose-loader?$!jquery'  // expose-loader 暴露全局的loader 内联的loader
+方法2:暴露到全局的window上  wepack.config.js中:
+rules: [ 
+    {
+        test:require.resolve('jquery'),
+        use:'expose-loader?$'
+    },
+}
+方法3:在每个模块中注入$对象  wepack.config.js中:
+let webpack = require('webpack');
+plugins:[
+    new webpack.ProvidePlugin({ // 在每个模块中注入$对象 
+        jquery:'$'
+    })
+]
+方法4:外部引入但不打包(externals)
+1.html文件中通过script文件引入 不打包
+2. wepack.config.js中:
+ externals: {
+        jquery: "$"
+    },
+```
+
+## webpack使用图片 打包图片 
+1. js中创建图片来引入  需要file-loader
+2. css中引入 background-url  不需要处理直接引用
+3. <img src="">  "html-withimg-loader": "^0.1.16",
+  rules: [ 
+            {
+                test: /\.html$/,
+                use: 'html-withimg-loader'
+            },
+
+一般不直接使用file-loader 而是使用url-loader 
+
+file-loader与url-loader区别：
+file-loader是单独引入图片文件
+url-loader可以控制文件大于多少时像file-loader一样单独引入 小于多少K时以base64格式转化到js文件中
+
+
+## 多页应用
+```javascript
+mode: "production",
+entry: {
+    home: './src/index.js',
+    other: './src/other.js',
+},
+output: {
+    filename: '[name].js', // 打包后的文件名 name表示 home/other
+    // filename: 'bundle.[hash:8].js', // 打包后的文件名 + hash 限制八位
+    path: path.resolve(__dirname, 'dist'), // 路径必须是一个绝对路径
+},
+plugins: [
+    new HtmlWebpackPlugin({
+        template: './src/index.html',
+        filename: 'home.html',
+        chunks: ['home'] // 允许您只添加需要的代码块 [home,other]
+    }),
+    new HtmlWebpackPlugin({
+        template: './src/index.html',
+        filename: 'other.html',
+        chunks: ['other']  // 
+
+    }),
+],
+```
+
+## source-maps
+1) 源码映射 会单独生成一个sourcemap文件 出错了 会标识 当前报错的列和行 大 和 全
+devtool:'source-map', // 增加映射文件 可以帮我们调试源代码
+2) 不会产生单独的文件 但是可以显示行和列
+devtool:'eval-source-map',
+3)  不会产生列 但是是一个单独的映射文件
+devtool:'cheap-module-source-map', // 产生后你可以保留起来
+4) 不会长生文件 集成在打包后的文件中 不会产生列
+devtool: 'cheap-module-eval-source-map',
+
+
+
+## watch的用法
+yarn dev 无法查看生成的文件 
+yarn build 无法实时更新 这时需要配置watch选项
+watch: true,
+watchOptions: { // 监控的选项
+    poll: 1000, // 每秒 问我 1000次
+    aggregateTimeout: 500, // 防抖 我一直输入代码 
+    ignored: /node_modules/ // 不需要进行监控哪个文件
+},
+
+
+## webpack小插件应用
+1) cleanWebpackPlugin 
+2) copyWebpackPlugin
+3) bannerPlugin  内置
+
+"clean-webpack-plugin": "^1.0.0",
+"copy-webpack-plugin": "^4.6.0"
+
+```javascript
+let CleanWebpackPlugin = require('clean-webpack-plugin');
+let CopyWebpackPlugin = require('copy-webpack-plugin');
+
+
+new CleanWebpackPlugin('./dist'),
+new CopyWebpackPlugin([ // 拷贝插件
+    {from:'doc',to:'./'}
+]),
+new webpack.BannerPlugin('make 2019 by jw')
+```
+
+## webpack 跨域问题
+
+```javascript
+ devServer: { // 开发服务器配置
+    port: 3000,
+    progress: true, // 打包进度条
+    contentBase: './build',// 设置静态服务器目录
+    // open:true, // 自动打开浏览器
+    // compress:true, // gzip？ 压缩
+
+    
+
+
+    //2） 我们前端只想单纯来模拟数据
+    // before(app){ // 提供的方法 钩子
+    //   app.get('/user',(req,res)=>{
+    //     res.json({name:'珠峰架构-before'})
+    //   })
+    // }
+    // 1）
+    proxy:{ // 重写的方式 把请求代理到express服务器上
+        '/api':{
+            target:'http://localhost:3080',
+            pathRewrite:{'/api':''}
+        }// 配置了一个代理
+    }
+},
+
+// express serve.js
+ //3) 有服务端 不用用代理来处理 能不能再服务端中启动webpack 端口用服务端端口 这样后端前端一起用一个端口启动就不会跨域
+ yarn add webpack webpack-dev-middleware -D
+
+let express = require('express');
+let app = express();
+let webpack = require('webpack');
+
+// 中间件
+let middle = require('webpack-dev-middleware');  // 需要安装
+let config = require('./webpack.config.js');
+let compiler = webpack(config);
+
+app.use(middle(compiler));
+
+app.get('/user', (req, res) => {
+    res.json({ name: '珠峰架构1' })
+})
+
+app.listen(3080);
+```
+
+
+## resolve属性的配置
+
+
+```javascript
+
+resolve:{ // 解析 第三方包 common
+    modules:[path.resolve('node_modules')],
+    extensions:['.js','.css','.json','.vue'], // 实现自动添加引入文件后缀
+
+    // 实现只引入bootstrap样式文件！！！！！
+    // 方法1: import bootstrap/dist/css/bootstrap.css 
+    // 方法2: 使用webpack resolve配置里的mainFields或者alias 实现 import bootstrap 引入的是css文件而不是js文件
+    // mainFields:['style','main']  // 主入口的字段 默认是第三方包的package.json里的main字段 这里设置优先为style字段 没有再main
+    // mainFiles:[], // 入口文件的名字 默认index.js
+    // alias:{ // 别名 vue vue.runtime
+    //   bootstrap:'bootstrap/dist/css/bootstrap.css'
+    // }
+},
+```
+
+
+## 定义环境变量
+// index.js中可直接使用变量DEV 值为'dev1111'
+plugins: [
+    new webpack.DefinePlugin({
+        DEV:"'dev1111'",
+        FLAG:'true',  // 值为boolean true
+        EXPORESSION:'1+1'  // 值为number 2
+    }),
+    
+],
+
+
+## 区分不同环境 dev pro
+yarn add webpack-merge -D  "webpack-merge": "^4.1.5"
+
+// webpack.dev.js
+let { smart } = require('webpack-merge');
+let base = require('./webpack.base.js');
+
+module.exports = smart(base, {
+    mode: 'development',
+    devServer: {
+
+    },
+    devtool: 'source-map'
+})
+
+## webpack的优化
+### no-parse
+// webpack.config.js
+module:{
+    noParse:/jquery/ , // 不去解析jquery中的依赖库
+}
+
+### IgnorePlugin
+```javascript
+// 忽略依赖中引用的某些文件 减少包体积
+ plugins: [
+    // momemt中默认引入各种语言文件 IgnorePlugin可以设置不全部引入 然后在业务文件中按需引入语言 
+    new webpack.IgnorePlugin(/\.\/locale/, /moment/), 
+],
+// index.js
+import 'moment/locale/zh-cn'
+moment.locale('zh-cn')
+console.log(moment().endOf('day').fromNow());
+
+```
+
+### dllPlugin 动态连接库
+```javascript
+import React from "react";
+import {render} from 'react-dom'
+render(<h1>jsx</h1>,window.root)
+
+// React和react-dom库比较大且不会更改 可以独立的先打包 然后开发时再引用这个打包好的文件
+// webpack.config.react.js
+let path = require('path');
+let webpack = require('webpack');
+module.exports = {
+    mode: 'development',
+    entry: {
+        react: ['react', 'react-dom'],
+    },
+    output: {
+        filename: '_dll_[name].js', // 产生的文件名
+        path: path.resolve(__dirname, 'dist'),
+        library: '_dll_[name]', // _dll_react
+        //libraryTarget:'var' // commonjs var this ....
+    },
+    plugins: [
+        new webpack.DllPlugin({ // name == library
+            name: '_dll_[name]',
+            path: path.resolve(__dirname, 'dist', 'manifest.json')
+        })
+    ]
+}
+
+// 执行打包命令 npx webpack  --config webpack.config.react.js
+// 生成 _dll_react.js文件和manifest.json文件 在dist/index.html中引用
+ <script src="./_dll_react.js"></script>
+
+// 在webpack.config.js中配置
+plugins: [
+    new webpack.DllReferencePlugin({
+        manifest: path.resolve(__dirname, 'dist', 'manifest.json')
+    }),
+]
+// 这样项目中使用的依赖react和react-dom可预先在manifest.json清单中找到不需要打包进来减少主包的体积
+```
+
+### happypack 多线程打包
+
+https://gitee.com/zhang_renyang/day_webpack4/blob/master/webpack%E4%BC%98%E5%8C%96/webpack-optimize/package.json

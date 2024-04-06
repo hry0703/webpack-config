@@ -1,30 +1,43 @@
-
-require('@babel/polyfill')
-require('./index.css');
-require('./index.less');
-
-console.log('hello world');
-let str = require('./a')
-console.log(str.a);
-
-let fn = ()=>{
-    console.log('es6代码');
-}
-
-fn()
-
-@log
-class A {
-    a = '1'
-}
-
-function log (params) {
-    console.log('log', params);
-    
-}
-
-let aaa = new A();
-console.log(aaa.a,);
+// console.log('index');
 
 
-console.log('实例上的方法babel转换测试','aaa'.includes('a'))
+// class Log{
+//     constructor(){
+//         console.log('出错了111111111');
+//     }
+// }
+
+// let log = new Log()
+
+// let xhr = new XMLHttpRequest();
+
+// // http://localhost:8080   webpack-dev-server的服务 -> 3000
+
+// // http-proxy
+// xhr.open('GET','/api/user',true);
+
+// xhr.onload = function(){
+//   console.log(xhr.response);
+// }
+
+// xhr.send();
+
+
+// if(DEV){
+//     console.log('dev变量', DEV);
+// }else{
+//     console.log('非dev变量');
+// }
+
+
+
+// import jQuery from "jquery";
+// import moment from "moment";
+// import 'moment/locale/zh-cn'
+// moment.locale('zh-cn')
+// console.log(moment().endOf('day').fromNow());
+
+
+import React from "react";
+import {render} from 'react-dom'
+render(<h1>jsx</h1>,window.root)
