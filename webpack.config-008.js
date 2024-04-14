@@ -30,9 +30,6 @@ module.exports = {
                 // collapseWhitespace:true, // 折叠成一行
             }
         }),
-        new webpack.NamedModulesPlugin(), // 打印更新的模块路径
-        new webpack.HotModuleReplacementPlugin(),// 热更新插件
-
 
     ],
     mode: 'development',
@@ -120,6 +117,22 @@ module.exports = {
 
 
     optimization: { // 优化项  
+        splitChunks:{
+            cacheGroups:{
+                common:{
+                    chunks:'initial',
+                    // miniSize:0,
+                    minChunks:2
+                },
+                vendor:{
+                    priority:1,
+                    test:/node_modules/,
+                    chunks: 'initial',
+                    // miniSize:0,
+                    minChunks: 2
+                }
+            }
+        },
         minimizer: [  // minimizer项不写时会默认使用UglifyJsPlugin压缩js文件；若需要再压缩css 需要再显式调用UglifyJsPlugin压缩js
             // new UglifyJsPlugin({
             //     cache: true,
@@ -129,8 +142,7 @@ module.exports = {
             new OptimizeCss()  // 压缩打包后的css模块
         ]
     },
-    devServer: { // 开发服务器配置、
-        hot:true,  // 热更新
+    devServer: { // 开发服务器配置
         port: 3000,
         progress: true, // 打包进度条
         contentBase: './dist',// 设置静态服务器目录

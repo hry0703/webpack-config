@@ -86,25 +86,25 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./node_modules/react-dom/index.js":
-/*!*********************************************************************************!*\
-  !*** delegated ./node_modules/react-dom/index.js from dll-reference _dll_react ***!
-  \*********************************************************************************/
+/***/ "./src/a.js":
+/*!******************!*\
+  !*** ./src/a.js ***!
+  \******************/
 /*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-eval("module.exports = (__webpack_require__(/*! dll-reference _dll_react */ \"dll-reference _dll_react\"))(\"./node_modules/react-dom/index.js\");\n\n//# sourceURL=webpack:///delegated_./node_modules/react-dom/index.js_from_dll-reference__dll_react?");
+eval("console.log('a');\n\n//# sourceURL=webpack:///./src/a.js?");
 
 /***/ }),
 
-/***/ "./node_modules/react/index.js":
-/*!*****************************************************************************!*\
-  !*** delegated ./node_modules/react/index.js from dll-reference _dll_react ***!
-  \*****************************************************************************/
+/***/ "./src/b.js":
+/*!******************!*\
+  !*** ./src/b.js ***!
+  \******************/
 /*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-eval("module.exports = (__webpack_require__(/*! dll-reference _dll_react */ \"dll-reference _dll_react\"))(\"./node_modules/react/index.js\");\n\n//# sourceURL=webpack:///delegated_./node_modules/react/index.js_from_dll-reference__dll_react?");
+eval("console.log('b');\n\n//# sourceURL=webpack:///./src/b.js?");
 
 /***/ }),
 
@@ -116,18 +116,7 @@ eval("module.exports = (__webpack_require__(/*! dll-reference _dll_react */ \"dl
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ \"./node_modules/react-dom/index.js\");\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);\n// console.log('index');\n\n// class Log{\n//     constructor(){\n//         console.log('出错了111111111');\n//     }\n// }\n\n// let log = new Log()\n\n// let xhr = new XMLHttpRequest();\n\n// // http://localhost:8080   webpack-dev-server的服务 -> 3000\n\n// // http-proxy\n// xhr.open('GET','/api/user',true);\n\n// xhr.onload = function(){\n//   console.log(xhr.response);\n// }\n\n// xhr.send();\n\n// if(DEV){\n//     console.log('dev变量', DEV);\n// }else{\n//     console.log('非dev变量');\n// }\n\n// import jQuery from \"jquery\";\n// import moment from \"moment\";\n// import 'moment/locale/zh-cn'\n// moment.locale('zh-cn')\n// console.log(moment().endOf('day').fromNow());\n\n\n\nObject(react_dom__WEBPACK_IMPORTED_MODULE_1__[\"render\"])( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"h1\", null, \"jsx\"), window.root);\n\n//# sourceURL=webpack:///./src/index.js?");
-
-/***/ }),
-
-/***/ "dll-reference _dll_react":
-/*!*****************************!*\
-  !*** external "_dll_react" ***!
-  \*****************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-eval("module.exports = _dll_react;\n\n//# sourceURL=webpack:///external_%22_dll_react%22?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _a__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./a */ \"./src/a.js\");\n/* harmony import */ var _a__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_a__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _b__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./b */ \"./src/b.js\");\n/* harmony import */ var _b__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_b__WEBPACK_IMPORTED_MODULE_1__);\n// console.log('index');\n\n// class Log{\n//     constructor(){\n//         console.log('出错了111111111');\n//     }\n// }\n\n// let log = new Log()\n\n// let xhr = new XMLHttpRequest();\n\n// // http://localhost:8080   webpack-dev-server的服务 -> 3000\n\n// // http-proxy\n// xhr.open('GET','/api/user',true);\n\n// xhr.onload = function(){\n//   console.log(xhr.response);\n// }\n\n// xhr.send();\n\n// if(DEV){\n//     console.log('dev变量', DEV);\n// }else{\n//     console.log('非dev变量');\n// }\n\n// import jQuery from \"jquery\";\n// import moment from \"moment\";\n// import 'moment/locale/zh-cn'\n// moment.locale('zh-cn')\n// console.log(moment().endOf('day').fromNow());\n\n// import React from \"react\";\n// import {render} from 'react-dom'\n// render(<h1>jsx</h1>,window.root)\n\n\n\nconsole.log('index');\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ })
 

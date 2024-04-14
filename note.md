@@ -374,5 +374,108 @@ plugins: [
 ```
 
 ### happypack 多线程打包
+```javascript
+let Happypack = require('happypack')
+plugins: [
+    new Happypack({
+        id:'js',
+        use: [{
+            loader: 'babel-loader',
+            options: { // 用babel-loader 
+                presets: [
+                    '@babel/preset-env', // 把es6 - es5
+                    '@babel/preset-react', // 解析react语法
+                ],
+                plugins: [
+                    ["@babel/plugin-proposal-decorators", { "legacy": true }],  // 支持🥱的装饰器写法
+                    ["@babel/plugin-proposal-class-properties", { "loose": true }],  // 支持转换class类型写法  babel已支持？
+                    "@babel/plugin-transform-runtime" // 避免babel转换语法时内联的辅助函数的重复申明； 配合使用@babel/runtime 自动移除语法转换后内联的辅助函数（inline Babel helpers），使用@babel/runtime/helpers里的辅助函数来替代。这样就减少了我们手动引入的麻烦。
+                ]
+            }
+        }]
+    }),
+    new Happypack({
+        id: 'css',
+        use: ['style-loader','css-loader']
+    })
+],
+module: {  // 模块
+    // loaders 
+    rules: [
+        {
+            test: /\.js$/, // normal 普通的loader
+            include: path.resolve(__dirname, 'src'),
+            exclude: /node_modules/,
+            use: "Happypack/loader?id=js"
+            
+        },
+        {
+            test: /\.css$/, // normal 普通的loader
+            include: path.resolve(__dirname, 'src'),
+            exclude: /node_modules/,
+            use: "Happypack/loader?id=css"
 
-https://gitee.com/zhang_renyang/day_webpack4/blob/master/webpack%E4%BC%98%E5%8C%96/webpack-optimize/package.json
+        },
+    ]
+},
+```
+
+## webpack自带的优化
+
+### tree-sharking
+import 在生产环境下会自动去除掉没有用的代码
+require 不会
+
+### scope hosting 作用域提升
+let a= 1
+let b =2
+let c= 3
+let d = a+b+c
+console.log(d) // webpack生产环境打包会自动简化代码成console.log(6)
+
+
+## 抽离公共代码
+optimization: { // 优化项  
+    splitChunks:{
+        cacheGroups:{
+            common:{
+                chunks:'initial',
+                // miniSize:0,
+                minChunks:2
+            },
+            vendor:{
+                priority:1,
+                test:/node_modules/,
+                chunks: 'initial',
+                // miniSize:0,
+                minChunks: 2
+            }
+        }
+    }
+}
+
+## 懒加载
+// source.js
+export default "source"
+
+// index.js
+let button = document.createElement('button');
+button.innerHTML = 'hello';
+// vue的懒加 react懒加载
+button.addEventListener('click',function () {
+  // es6 草案中的语法 jsonp实现动态加载文件
+  import('./source.js').then(data=>{
+    console.log(data.default);
+  })
+});
+document.body.appendChild(button);
+
+## 热更新
+plugins: [
+    new webpack.NamedModulesPlugin(), // 打印更新的模块路径
+    new webpack.HotModuleReplacementPlugin(),// 热更新插件
+],
+devServer: { // 开发服务器配置、
+    hot:true,  // 热更新
+    
+},

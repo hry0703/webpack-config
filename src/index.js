@@ -38,6 +38,23 @@
 // console.log(moment().endOf('day').fromNow());
 
 
-import React from "react";
-import {render} from 'react-dom'
-render(<h1>jsx</h1>,window.root)
+// import React from "react";
+// import {render} from 'react-dom'
+// render(<h1>jsx</h1>,window.root)
+
+// import './a.js'
+// import './b.js'
+// import $ from "jquery";
+
+// console.log('$ ', $);
+
+let button = document.createElement('button');
+button.innerHTML = 'hello';
+// vue的懒加 react懒加载
+button.addEventListener('click',function () {
+  // es6 草案中的语法 jsonp实现动态加载文件
+  import('./source.js').then(data=>{
+    console.log(data.default);
+  })
+});
+document.body.appendChild(button);
